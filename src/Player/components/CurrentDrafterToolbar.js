@@ -4,11 +4,11 @@ import Typography from '@material-ui/core/Typography/Typography'
 
 class CurrentDrafterToolbar extends Component {
     render() {
-        const {currentDrafterIndex, drafters} = this.props
+        const {currentDrafterIndex, drafters, round} = this.props
         return (
             <Toolbar>
                 <Typography variant='title' color='inherit'>
-                    {drafters[currentDrafterIndex] && drafters[currentDrafterIndex].name} is picking
+                    Round {round}/16: {drafters[currentDrafterIndex] && drafters[currentDrafterIndex].name} is picking
                 </Typography>
             </Toolbar>
         )

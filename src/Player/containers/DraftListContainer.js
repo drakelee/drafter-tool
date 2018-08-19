@@ -8,7 +8,7 @@ import Paper from '@material-ui/core/Paper/Paper'
 class DraftListContainer extends Component {
 
     render() {
-        const {classes, currentDrafterIndex, drafters, visiblePlayers, handleDraftClick} = this.props
+        const {classes, currentDrafterIndex, drafters, visiblePlayers, handleDraftClick, round} = this.props
         return (
             <Fragment>
                 <Toolbar/>
@@ -16,6 +16,7 @@ class DraftListContainer extends Component {
                     <CurrentDrafterToolbar
                         drafters={drafters}
                         currentDrafterIndex={currentDrafterIndex}
+                        round={round}
                     />
                     <DraftList
                         players={visiblePlayers}

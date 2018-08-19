@@ -13,6 +13,7 @@ class DraftToolContainer extends Component {
         // DraftList
         currentDrafterIndex: -1,
         players: [],
+        round: 1,
         visiblePlayers: [],
         // DraftList and TeamListContainer
         drafters: []
@@ -31,7 +32,7 @@ class DraftToolContainer extends Component {
     }
 
     render() {
-        const {currentTab, currentDrafterIndex, players, visiblePlayers, drafters} = this.state
+        const {currentTab, currentDrafterIndex, players, visiblePlayers, drafters, round} = this.state
 
         return (
             <Fragment>
@@ -49,6 +50,7 @@ class DraftToolContainer extends Component {
                         visiblePlayers={visiblePlayers}
                         drafters={drafters}
                         handleDraftClick={this.handleDraftClick}
+                        round={round}
                     />
                 }
                 {currentTab === 1 &&
@@ -66,14 +68,15 @@ class DraftToolContainer extends Component {
     }
 
     handleDraftClick = index => {
-        const {currentDrafterIndex, players} = this.state
+        const {currentDrafterIndex, players, round} = this.state
         players[index].removed = true
         const visiblePlayers = players.filter(player => !player.removed).slice(0, 15)
-
+        const isNewRound = currentDrafterIndex + 1 === drafters.length
         this.setState({
             visiblePlayers,
             players,
-            currentDrafterIndex: currentDrafterIndex + 1 === drafters.length ? 0 : currentDrafterIndex + 1
+            currentDrafterIndex: isNewRound ? 0 : currentDrafterIndex + 1,
+            round: isNewRound ? round + 1 : round
         })
     }
 
