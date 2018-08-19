@@ -56,7 +56,7 @@ class DraftList extends Component {
     }
 
     renderBodyRows = () => {
-        const {classes, players} = this.props
+        const {classes, players, finished} = this.props
         return players.map((player, index) => {
             return (
                 <TableRow
@@ -80,6 +80,7 @@ class DraftList extends Component {
                                 root: classes.draftButtonRoot
                             }}
                             onClick={this.handleDraftClick(player.Rank)}
+                            disabled={finished}
                         >
                             Draft
                         </Button>
@@ -95,7 +96,7 @@ class DraftList extends Component {
 
     handleDraftClick = rank => () => {
         const {handleDraftClick} = this.props
-        handleDraftClick && handleDraftClick(rank - 1)
+        handleDraftClick && handleDraftClick(parseInt(rank, 10) - 1)
     }
 }
 
