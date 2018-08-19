@@ -5,7 +5,6 @@ import TableHead from '@material-ui/core/TableHead/TableHead'
 import TableBody from '@material-ui/core/TableBody/TableBody'
 import TableRow from '@material-ui/core/TableRow/TableRow'
 import TableCell from '@material-ui/core/TableCell/TableCell'
-import _ from 'lodash'
 import Button from '@material-ui/core/Button/Button'
 
 class DraftList extends Component {
@@ -46,7 +45,7 @@ class DraftList extends Component {
     renderHeaderRows = () => {
         const {headers} = this.state
         const whitelist = ['Rank', 'Player', 'Team', 'Bye', 'POS', 'AVG']
-        const filteredHeaders = _.filter(headers, header => whitelist.includes(header))
+        const filteredHeaders = headers.filter(header => whitelist.includes(header))
         return (
             <TableRow>
                 {
