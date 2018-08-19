@@ -50,7 +50,6 @@ class TeamListContainer extends Component {
                         return <TableCell key={header}>{header}</TableCell>
                     })
                 }
-                <TableCell/>
             </TableRow>
         )
     }
@@ -63,18 +62,18 @@ class TeamListContainer extends Component {
                     key={player.pick}
                 >
                     <TableCell component='th' scope='row'>
-                        {player.pick}
+                        {player.POS}
                     </TableCell>
                     <TableCell>{player.Player}</TableCell>
-                    <TableCell>{player.Bye}</TableCell>
-                    <TableCell>{player.POS}</TableCell>
+                    <TableCell>{player.pick}</TableCell>
                     <TableCell>{player.Team}</TableCell>
+                    <TableCell>{player.Bye}</TableCell>
                 </TableRow>
             )
         })
     }
 }
 
-const teamHeaders = ['Pick', 'Player', 'POS', 'Team']
+const teamHeaders = ['POS', 'Player', 'pick', 'Team', 'Bye']
 
 export default TeamListContainer
