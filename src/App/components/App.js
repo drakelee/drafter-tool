@@ -2,18 +2,12 @@ import React, {Component} from 'react'
 import NavBarContainer from '../../Nav/containers/NavBarContainer'
 import {withStyles} from '@material-ui/core/styles'
 import Toolbar from '@material-ui/core/Toolbar/Toolbar'
-import DraftList from '../../Player/containers/DraftListContainer'
-import Tabs from '@material-ui/core/Tabs/Tabs'
-import Tab from '@material-ui/core/Tab/Tab'
+import DraftToolContainer from '../../Player/containers/DraftToolContainer'
 
 class App extends Component {
-    state = {
-        currentTab: 0
-    }
 
     render() {
         const {classes} = this.props
-        const {currentTab} = this.state
         return (
             <div className="classes.root">
                 <NavBarContainer
@@ -21,21 +15,10 @@ class App extends Component {
                 />
                 <Toolbar/>
                 <main className={classes.content}>
-                    <Tabs
-                        onChange={this.handleTabChange}
-                        value={currentTab}
-                    >
-                        <Tab label='Player List'/>
-                        <Tab label='Team List'/>
-                    </Tabs>
-                    {currentTab === 0 && <DraftList/>}
+                    <DraftToolContainer/>
                 </main>
             </div>
         )
-    }
-
-    handleTabChange = (event, value) => {
-        this.setState({currentTab: value})
     }
 }
 
