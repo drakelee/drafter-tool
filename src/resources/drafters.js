@@ -25,7 +25,7 @@ export default [
     },
     {
         name: 'Geoffrey',
-        team: [{Player: 'Le\\\'Veon Bell', pick: 1}, {Player: 'Marquise Goodwin', pick: 16}]
+        team: [{Player: 'Le\'Veon Bell', pick: 1}, {Player: 'Marquise Goodwin', pick: 16}]
     },
     {
         name: 'Colman',
