@@ -10,8 +10,7 @@ import Button from '@material-ui/core/Button/Button'
 
 class DraftList extends Component {
     state = {
-        headers: [],
-        selectedIndex: -1
+        headers: []
     }
 
     componentDidMount() {
@@ -61,13 +60,11 @@ class DraftList extends Component {
     }
 
     renderBodyRows = () => {
-        const {classes, selectedIndex, players} = this.props
+        const {classes, players} = this.props
         return players.map((player, index) => {
-            const selected = selectedIndex === index
             return (
                 <TableRow
                     hover
-                    selected={selected}
                     key={index}
                     classes={{
                         root: player.removed && classes.tableRowRootDisabled
@@ -86,7 +83,7 @@ class DraftList extends Component {
                             classes={{
                                 root: classes.draftButtonRoot
                             }}
-                            onClick={this.handleDraftClick(index)}
+                            onClick={this.handleDraftClick(player.Rank)}
                         >
                             Draft
                         </Button>
@@ -100,9 +97,9 @@ class DraftList extends Component {
         return Object.keys(row)
     }
 
-    handleDraftClick = index => () => {
+    handleDraftClick = rank => () => {
         const {handleDraftClick} = this.props
-        handleDraftClick && handleDraftClick(index)
+        handleDraftClick && handleDraftClick(rank - 1)
     }
 }
 

@@ -9,22 +9,24 @@ class DraftListContainer extends Component {
     state = {
         players: [],
         drafters: [],
-        selectedIndex: -1,
+        visiblePlayers: [],
         currentDrafterIndex: -1
     }
 
     componentDidMount() {
         const players = playerData.data
+        const visiblePlayers = players.filter(player => !player.removed).slice(0, 15)
         this.setState({
             drafters,
             players,
+            visiblePlayers,
             currentDrafterIndex: 0
         })
     }
 
     render() {
         const {classes} = this.props
-        const {currentDrafterIndex, drafters, selectedIndex, players} = this.state
+        const {currentDrafterIndex, drafters, visiblePlayers} = this.state
         return (
             <Fragment>
                 <Toolbar/>
@@ -33,9 +35,8 @@ class DraftListContainer extends Component {
                     currentDrafterIndex={currentDrafterIndex}
                 />
                 <DraftList
-                    players={players}
+                    players={visiblePlayers}
                     classes={classes}
-                    selectedIndex={selectedIndex}
                     handleDraftClick={this.handleDraftClick}
                 />
             </Fragment>
@@ -43,12 +44,13 @@ class DraftListContainer extends Component {
     }
 
     handleDraftClick = index => {
-        const {currentDrafterIndex, selectedIndex, players} = this.state
+        const {currentDrafterIndex, players} = this.state
         players[index].removed = true
+        const visiblePlayers = players.filter(player => !player.removed).slice(0, 15)
 
         this.setState({
+            visiblePlayers,
             players,
-            selectedIndex: selectedIndex === index ? -1 : index,
             currentDrafterIndex: currentDrafterIndex + 1 === drafters.length ? 0 : currentDrafterIndex + 1
         })
     }
