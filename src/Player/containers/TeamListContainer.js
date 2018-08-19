@@ -59,13 +59,13 @@ class TeamListContainer extends Component {
             return (
                 <TableRow
                     hover
-                    key={player.pick}
+                    key={player.round}
                 >
                     <TableCell component='th' scope='row'>
                         {player.POS}
                     </TableCell>
                     <TableCell>{player.Player}</TableCell>
-                    <TableCell>{player.pick}</TableCell>
+                    <TableCell>{player.round}</TableCell>
                     <TableCell>{player.Team}</TableCell>
                     <TableCell>{player.Bye}</TableCell>
                 </TableRow>
@@ -74,6 +74,6 @@ class TeamListContainer extends Component {
     }
 }
 
-const teamHeaders = ['POS', 'Player', 'pick', 'Team', 'Bye']
+const teamHeaders = ['POS', 'Player', 'Round', 'Team', 'Bye']
 
 export default TeamListContainer
