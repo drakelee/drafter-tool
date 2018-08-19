@@ -3,6 +3,7 @@ import DraftList from '../components/DraftList'
 import {withStyles} from '@material-ui/core/styles'
 import CurrentDrafterToolbar from '../components/CurrentDrafterToolbar'
 import Toolbar from '@material-ui/core/Toolbar/Toolbar'
+import Paper from '@material-ui/core/Paper/Paper'
 
 class DraftListContainer extends Component {
 
@@ -11,15 +12,17 @@ class DraftListContainer extends Component {
         return (
             <Fragment>
                 <Toolbar/>
-                <CurrentDrafterToolbar
-                    drafters={drafters}
-                    currentDrafterIndex={currentDrafterIndex}
-                />
-                <DraftList
-                    players={visiblePlayers}
-                    classes={classes}
-                    handleDraftClick={handleDraftClick}
-                />
+                <Paper>
+                    <CurrentDrafterToolbar
+                        drafters={drafters}
+                        currentDrafterIndex={currentDrafterIndex}
+                    />
+                    <DraftList
+                        players={visiblePlayers}
+                        classes={classes}
+                        handleDraftClick={handleDraftClick}
+                    />
+                </Paper>
             </Fragment>
         )
     }
