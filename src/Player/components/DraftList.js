@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import Table from '@material-ui/core/Table/Table'
-import Paper from '@material-ui/core/Paper/Paper'
 import TableHead from '@material-ui/core/TableHead/TableHead'
 import TableBody from '@material-ui/core/TableBody/TableBody'
 import TableRow from '@material-ui/core/TableRow/TableRow'
@@ -29,16 +28,14 @@ class DraftList extends Component {
 
     render() {
         return (
-            <Paper>
-                <Table>
-                    <TableHead>
-                        {this.renderHeaderRows()}
-                    </TableHead>
-                    <TableBody>
-                        {this.renderBodyRows()}
-                    </TableBody>
-                </Table>
-            </Paper>
+            <Table>
+                <TableHead>
+                    {this.renderHeaderRows()}
+                </TableHead>
+                <TableBody>
+                    {this.renderBodyRows()}
+                </TableBody>
+            </Table>
         )
     }
 

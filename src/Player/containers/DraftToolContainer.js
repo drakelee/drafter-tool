@@ -3,6 +3,8 @@ import Tabs from '@material-ui/core/Tabs/Tabs'
 import Tab from '@material-ui/core/Tab/Tab'
 import DraftList from './DraftListContainer'
 import playerData from '../../resources/players.json'
+import drafters from '../../resources/drafters'
+import TeamListContainer from './TeamListContainer'
 
 class DraftToolContainer extends Component {
     state = {
@@ -46,6 +48,11 @@ class DraftToolContainer extends Component {
                         handleDraftClick={this.handleDraftClick}
                     />
                 }
+                {currentTab === 1 &&
+                    <TeamListContainer
+                        drafters={drafters}
+                    />
+                }
             </Fragment>
         )
     }
@@ -67,10 +74,5 @@ class DraftToolContainer extends Component {
         })
     }
 }
-
-const drafters = [
-    {name: 'Andrew'}, {name: 'Shawn'}, {name: 'Drake'}, {name: 'Brandon'}, {name: 'Jace'}, {name: 'Matt'}, {name: 'Geoffrey'},
-    {name: 'Colman'}, {name: 'Darcy'}, {name: 'Kevin'}, {name: 'Cody'}, {name: 'Dustin'}
-]
 
 export default DraftToolContainer
