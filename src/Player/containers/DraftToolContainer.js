@@ -5,11 +5,14 @@ import DraftListContainer from './DraftListContainer'
 import playerData from '../../resources/players.json'
 import drafters from '../../resources/drafters'
 import TeamListContainer from './TeamListContainer'
-import {find, every, isNull} from 'lodash'
+import {head, find, every, isEmpty} from 'lodash'
+import DraftOrderContainer from './DraftOrderContainer'
 
 class DraftToolContainer extends Component {
     state = {
         currentTab: 0,
+        // DraftOrder
+        nextDrafters: [],
         // DraftList
         currentDrafterIndex: -1,
         players: [],
@@ -32,10 +35,26 @@ class DraftToolContainer extends Component {
         })
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        const {nextDrafters} = this.state
+        const nextDrafter = head(nextDrafters)
+        if (nextDrafter !== head(prevState.nextDrafters)) {
+            const keeper = nextDrafter.keeper
+            if (keeper) {
+                this.handleDraftClick(keeper.Rank - 1, true)
+            }
+        }
+    }
+
     render() {
-        const {currentTab, currentDrafterIndex, players, visiblePlayers, drafters, round, finished} = this.state
+        const {currentTab, currentDrafterIndex, players, visiblePlayers, drafters, round, finished, nextDrafters} = this.state
         return (
             <Fragment>
+                <DraftOrderContainer
+                    nextDrafters={nextDrafters}
+                    currentDrafterIndex={currentDrafterIndex}
+                    drafters={drafters}
+                />
                 <Tabs
                     onChange={this.handleTabChange}
                     value={currentTab}
@@ -68,7 +87,7 @@ class DraftToolContainer extends Component {
         this.setState({currentTab: value})
     }
 
-    handleDraftClick = index => {
+    handleDraftClick = (index, isKeeper) => {
         const {currentDrafterIndex, players, round, drafters} = this.state
         const draftedPlayer = {
             ...players[index],
@@ -82,7 +101,7 @@ class DraftToolContainer extends Component {
         const drafter = drafters[currentDrafterIndex]
         const newDrafters = this.replaceArray(drafters, currentDrafterIndex, [{
             ...drafter,
-            team: [...drafter.team, draftedPlayer]
+            team: [...drafter.team, ...isKeeper ? [] : [draftedPlayer]]
         }])
 
         const isNewRound = currentDrafterIndex + 1 === drafters.length
@@ -120,24 +139,28 @@ class DraftToolContainer extends Component {
         })
     }
 
-    nextDrafter = (currentDraftIndex, round, drafters) => {
+    nextDrafter = (currentDraftIndex, round, drafters, prevIter = []) => {
         const remainingDrafters = drafters.slice(currentDraftIndex, drafters.length)
-        const nextDraftIndex = remainingDrafters.reduce((acc, drafter, index) => {
+        const nextDrafters = remainingDrafters.reduce((acc, drafter, index) => {
             const {team} = drafter
-            if (isNull(acc)) {
-                if (every(team, player => player.round !== round)) {
-                    return currentDraftIndex + index
-                }
+            if (every(team, player => player.round !== round)) {
+                return [...acc, {index: currentDraftIndex + index, round}]
+            } else {
+                const keeper = find(team, player => player.round === round)
+                return [...acc, {index: currentDraftIndex + index, keeper, round}]
             }
-            return acc
-        }, null)
+        }, prevIter)
 
-        if (isNull(nextDraftIndex)) {
+        let fullList = nextDrafters.slice(0, 12)
+        if (isEmpty(nextDrafters)) {
             return this.nextDrafter(0, round + 1, drafters)
+        } else if (nextDrafters.length < 12) {
+            fullList = this.nextDrafter(0, round + 1, drafters, nextDrafters).nextDrafters.slice(0, 12)
         }
 
         return {
-            currentDrafterIndex: nextDraftIndex,
+            currentDrafterIndex: head(fullList).index,
+            nextDrafters: fullList,
             round,
             finished: round > 16
         }
