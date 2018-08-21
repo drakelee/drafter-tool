@@ -5,7 +5,7 @@ import DraftListContainer from './DraftListContainer'
 import playerData from '../../resources/players.json'
 import drafters from '../../resources/drafters'
 import TeamListContainer from './TeamListContainer'
-import {head, find, every, isEmpty} from 'lodash'
+import {head, find, every, isEmpty, reverse} from 'lodash'
 import DraftOrderContainer from './DraftOrderContainer'
 
 class DraftToolContainer extends Component {
@@ -38,7 +38,7 @@ class DraftToolContainer extends Component {
     componentDidUpdate(prevProps, prevState) {
         const {nextDrafters} = this.state
         const nextDrafter = head(nextDrafters)
-        if (nextDrafter !== head(prevState.nextDrafters)) {
+        if (nextDrafter && nextDrafter !== head(prevState.nextDrafters)) {
             const keeper = nextDrafter.keeper
             if (keeper) {
                 this.handleDraftClick(keeper.Rank - 1, true)
@@ -104,8 +104,19 @@ class DraftToolContainer extends Component {
             team: [...drafter.team, ...isKeeper ? [] : [draftedPlayer]]
         }])
 
-        const isNewRound = currentDrafterIndex + 1 === drafters.length
-        const nextDrafter = this.nextDrafter(isNewRound ? 0 : currentDrafterIndex + 1, isNewRound ? round + 1 : round, drafters)
+        const isMovingForward = round % 2 !== 0
+        const isNewRound = isMovingForward ? currentDrafterIndex + 1 === drafters.length : currentDrafterIndex - 1  < 0
+        let nextIndex
+        if (isNewRound && isMovingForward) {
+            nextIndex = drafters.length - 1
+        } else if (isNewRound && !isMovingForward) {
+            nextIndex = 0
+        } else if (isMovingForward) {
+            nextIndex = currentDrafterIndex + 1
+        } else if (!isMovingForward) {
+            nextIndex = currentDrafterIndex - 1
+        }
+        const nextDrafter = this.nextDrafter(nextIndex, isNewRound ? round + 1 : round, drafters)
         this.setState({
             visiblePlayers,
             drafters: newDrafters,
@@ -140,27 +151,40 @@ class DraftToolContainer extends Component {
     }
 
     nextDrafter = (currentDraftIndex, round, drafters, prevIter = []) => {
-        const remainingDrafters = drafters.slice(currentDraftIndex, drafters.length)
+        if (round > 16) {
+            return {
+                currentDrafterIndex: 0,
+                nextDrafters: [],
+                round: 17,
+                finished: true
+            }
+        }
+        const isForward = round % 2 !== 0
+        let remainingDrafters = drafters.slice(isForward ? currentDraftIndex : 0, isForward ? drafters.length : currentDraftIndex + 1)
+        if (!isForward) remainingDrafters = reverse(remainingDrafters)
         const nextDrafters = remainingDrafters.reduce((acc, drafter, index) => {
+            const indexDir = isForward ? index : -index
             const {team} = drafter
             if (every(team, player => player.round !== round)) {
-                return [...acc, {index: currentDraftIndex + index, round}]
+                return [...acc, {index: currentDraftIndex + indexDir, round}]
             } else {
                 const keeper = find(team, player => player.round === round)
-                return [...acc, {index: currentDraftIndex + index, keeper, round}]
+                return [...acc, {index: currentDraftIndex + indexDir, keeper, round}]
             }
         }, prevIter)
 
         let fullList = nextDrafters.slice(0, 12)
-        if (isEmpty(nextDrafters)) {
-            return this.nextDrafter(0, round + 1, drafters)
-        } else if (nextDrafters.length < 12) {
-            fullList = this.nextDrafter(0, round + 1, drafters, nextDrafters).nextDrafters.slice(0, 12)
+        const startFromBeginning = (round + 1) % 2 !== 0
+        const initialIndex = startFromBeginning ? 0 : drafters.length - 1
+        if (isEmpty(nextDrafters) && round + 1 <= 16) {
+            return this.nextDrafter(initialIndex, round + 1, drafters)
+        } else if (nextDrafters.length < 12 && round + 1 <= 16) {
+            fullList = this.nextDrafter(initialIndex, round + 1, drafters, nextDrafters).nextDrafters.slice(0, 12)
         }
 
         return {
             currentDrafterIndex: head(fullList).index,
-            nextDrafters: fullList,
+            nextDrafters: round > 16 ? [] : fullList,
             round,
             finished: round > 16
         }
