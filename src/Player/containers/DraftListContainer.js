@@ -8,22 +8,25 @@ import Paper from '@material-ui/core/Paper/Paper'
 class DraftListContainer extends Component {
 
     render() {
-        const {classes, currentDrafterIndex, drafters, visiblePlayers, handleDraftClick, round, finished} = this.props
+        const {classes, currentDrafterIndex, drafters, visiblePlayers, handleDraftClick, round, finished, nextTurn} = this.props
         return (
             <Fragment>
                 <Toolbar/>
                 <Paper>
                     <CurrentDrafterToolbar
+                        classes={classes}
                         drafters={drafters}
                         currentDrafterIndex={currentDrafterIndex}
                         round={round}
                         finished={finished}
+                        nextTurn={nextTurn}
                     />
                     <DraftList
                         players={visiblePlayers}
                         classes={classes}
                         handleDraftClick={handleDraftClick}
                         finished={finished}
+                        nextTurn={nextTurn}
                     />
                 </Paper>
             </Fragment>
@@ -45,6 +48,9 @@ const styles = {
     },
     tableRowRootDisabled: {
         display: 'none'
+    },
+    draftToolbar: {
+        flex: 1
     }
 }
 
