@@ -51,6 +51,9 @@ const styles = {
     },
     draftToolbar: {
         flex: 1
+    },
+    nextPlayer: {
+        backgroundColor: '#A5D6A7'
     }
 }
 
