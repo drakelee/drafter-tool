@@ -48,12 +48,14 @@ class DraftToolContainer extends Component {
 
     render() {
         const {currentTab, currentDrafterIndex, players, visiblePlayers, drafters, round, finished, nextDrafters} = this.state
+        const {userIndex} = this.props
         return (
             <Fragment>
                 <DraftOrderContainer
                     nextDrafters={nextDrafters}
                     currentDrafterIndex={currentDrafterIndex}
                     drafters={drafters}
+                    userIndex={userIndex}
                 />
                 <Tabs
                     onChange={this.handleTabChange}
@@ -71,11 +73,13 @@ class DraftToolContainer extends Component {
                         handleDraftClick={this.handleDraftClick}
                         round={round}
                         finished={finished}
+                        userIndex={userIndex}
                     />
                 }
                 {currentTab === 1 &&
                     <TeamListContainer
                         drafters={drafters}
+                        userIndex={userIndex}
                     />
                 }
             </Fragment>
@@ -173,13 +177,13 @@ class DraftToolContainer extends Component {
             }
         }, prevIter)
 
-        let fullList = nextDrafters.slice(0, 12)
+        let fullList = nextDrafters.slice(0, 30)
         const startFromBeginning = (round + 1) % 2 !== 0
         const initialIndex = startFromBeginning ? 0 : drafters.length - 1
         if (isEmpty(nextDrafters) && round + 1 <= 16) {
             return this.nextDrafter(initialIndex, round + 1, drafters)
-        } else if (nextDrafters.length < 12 && round + 1 <= 16) {
-            fullList = this.nextDrafter(initialIndex, round + 1, drafters, nextDrafters).nextDrafters.slice(0, 12)
+        } else if (nextDrafters.length < 30 && round + 1 <= 16) {
+            fullList = this.nextDrafter(initialIndex, round + 1, drafters, nextDrafters).nextDrafters.slice(0, 30)
         }
 
         return {

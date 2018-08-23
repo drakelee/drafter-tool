@@ -7,6 +7,7 @@ import TableRow from '@material-ui/core/TableRow/TableRow'
 import TableCell from '@material-ui/core/TableCell/TableCell'
 import Toolbar from '@material-ui/core/Toolbar/Toolbar'
 import Typography from '@material-ui/core/Typography/Typography'
+import {withStyles} from '@material-ui/core/styles'
 
 class TeamListContainer extends Component {
     render() {
@@ -19,12 +20,13 @@ class TeamListContainer extends Component {
     }
 
     renderTeamTables = () => {
-        const {drafters} = this.props
-        return drafters.map(drafter => {
+        const {drafters, userIndex, classes} = this.props
+        return drafters.map((drafter, index) => {
             const {team, name} = drafter
+            const userTeam = userIndex === index
             return (
                 <Paper key={name}>
-                    <Toolbar>
+                    <Toolbar classes={{root: userTeam && classes.userTeam}}>
                         <Typography variant='title'>
                             {name}
                         </Typography>
@@ -76,4 +78,10 @@ class TeamListContainer extends Component {
 
 const teamHeaders = ['POS', 'Player', 'Round', 'Team', 'Bye']
 
-export default TeamListContainer
+const styles = {
+    userTeam: {
+        backgroundColor: '#4CAF50'
+    }
+}
+
+export default withStyles(styles)(TeamListContainer)

@@ -42,18 +42,19 @@ class DraftOrder extends Component {
     }
 
     renderDraftOrder = () => {
-        const {nextDrafters, drafters, classes} = this.props
+        const {nextDrafters, drafters, classes, userIndex} = this.props
         return nextDrafters.map((drafter, index) => {
             const drafterName = drafters[drafter.index].name
             const keeper = drafter.keeper
             const currentDrafter = index === 0
+            const userTeam = !currentDrafter && userIndex === drafter.index
             const title = keeper ? `${drafterName} is keeping ${keeper.Player}`:`${drafterName}`
             return (
                 <GridListTile
                     key={`${drafter.index}${drafter.round}`}
                     classes={{
                         root: classes.tile,
-                        tile: this.draftTileStyle(currentDrafter, keeper)
+                        tile: this.draftTileStyle(currentDrafter, keeper, userTeam)
                     }}
                 >
                     <GridListTileBar
@@ -77,12 +78,14 @@ class DraftOrder extends Component {
 
     }
 
-    draftTileStyle = (currentDrafter, keeper) => {
+    draftTileStyle = (currentDrafter, keeper, userTeam) => {
         const {classes} = this.props
         if (keeper) {
             return classes.tileKeeper
         } else if (currentDrafter) {
             return classes.tileDrafter
+        } else if (userTeam) {
+            return classes.tileUser
         } else {
             return classes.tile
         }
