@@ -24,7 +24,7 @@ class CurrentDrafter extends Component {
 
     renderMenuItems = () => {
         return drafters.map((drafter, index) => {
-            return <MenuItem value={index}>{drafter}</MenuItem>
+            return <MenuItem value={index} key={index}>{drafter}</MenuItem>
         })
     }
 
