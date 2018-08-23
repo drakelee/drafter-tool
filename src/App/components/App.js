@@ -3,11 +3,16 @@ import NavBarContainer from '../../Nav/containers/NavBarContainer'
 import {withStyles} from '@material-ui/core/styles'
 import Toolbar from '@material-ui/core/Toolbar/Toolbar'
 import DraftToolContainer from '../../Player/containers/DraftToolContainer'
+import CurrentDrafter from '../../Player/components/CurrentDrafter'
 
 class App extends Component {
+    state = {
+        userIndex: -1
+    }
 
     render() {
         const {classes} = this.props
+        const {userIndex} = this.state
         return (
             <div className="classes.root">
                 <NavBarContainer
@@ -15,10 +20,17 @@ class App extends Component {
                 />
                 <Toolbar/>
                 <main className={classes.content}>
-                    <DraftToolContainer/>
+                    {userIndex === -1 && <CurrentDrafter handleChange={this.handleChange}/>}
+                    {userIndex > -1 && <DraftToolContainer userIndex={userIndex}/>}
                 </main>
             </div>
         )
+    }
+
+    handleChange = index => {
+        this.setState({
+            userIndex: index
+        })
     }
 }
 

@@ -15,11 +15,9 @@ const styles = {
         display: 'flex',
         flexWrap: 'wrap',
         overflow: 'hidden',
-        width: '100%',
         justifyContent: 'flex-start'
     },
     gridList: {
-        width: '100%',
         flexWrap: 'noWrap',
         transform: 'translateZ(0)'
     },
@@ -49,6 +47,13 @@ const styles = {
     roundTile: {
         flex: 1,
         width: 110
+    },
+    tileUser: {
+        backgroundColor: '#4CAF50',
+        width: 100,
+        '&:hover': {
+            width: 400
+        }
     }
 }
 
