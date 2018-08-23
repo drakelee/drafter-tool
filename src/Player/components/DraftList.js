@@ -56,14 +56,14 @@ class DraftList extends Component {
     }
 
     renderBodyRows = () => {
-        const {classes, players, finished} = this.props
+        const {classes, players, finished, nextTurn} = this.props
         return players.map((player, index) => {
             return (
                 <TableRow
                     hover
                     key={index}
                     classes={{
-                        root: player.removed && classes.tableRowRootDisabled
+                        root: player.removed ? classes.tableRowRootDisabled : nextTurn === index && classes.nextPlayer
                     }}
                 >
                     <TableCell component='th' scope='row'>
