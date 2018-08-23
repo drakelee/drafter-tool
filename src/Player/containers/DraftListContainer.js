@@ -11,7 +11,6 @@ class DraftListContainer extends Component {
         const {classes, currentDrafterIndex, drafters, visiblePlayers, handleDraftClick, round, finished, nextTurn} = this.props
         return (
             <Fragment>
-                <Toolbar/>
                 <Paper>
                     <CurrentDrafterToolbar
                         classes={classes}

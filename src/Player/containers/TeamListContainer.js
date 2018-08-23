@@ -13,7 +13,6 @@ class TeamListContainer extends Component {
     render() {
         return (
             <Fragment>
-                <Toolbar/>
                 {this.renderTeamTables()}
             </Fragment>
         )

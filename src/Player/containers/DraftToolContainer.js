@@ -177,12 +177,10 @@ class DraftToolContainer extends Component {
             const drafterIndex = currentDraftIndex + indexDir
             const {team} = drafter
 
-            if (drafterIndex === userIndex && !foundNextTurn && nextTurnCounter !== 0) {
-                foundNextTurn = true
-            }
-
             if (every(team, player => player.round !== round)) {
-                if (drafterIndex !== userIndex && !foundNextTurn) {
+                if (drafterIndex === userIndex && !foundNextTurn && nextTurnCounter !== 0) {
+                    foundNextTurn = true
+                } else if (drafterIndex !== userIndex && !foundNextTurn) {
                     nextTurnCounter += 1
                 }
                 return [...acc, {index: drafterIndex, round}]
