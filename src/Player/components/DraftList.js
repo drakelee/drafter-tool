@@ -88,7 +88,7 @@ class DraftList extends Component {
             return (
                 <TableRow
                     hover
-                    key={index}
+                    key={player.Player}
                     classes={{
                         root: player.removed ? classes.tableRowRootDisabled : nextTurn === nonPagedIndex && classes.nextPlayer
                     }}
