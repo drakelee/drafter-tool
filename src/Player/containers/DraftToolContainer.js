@@ -49,7 +49,7 @@ class DraftToolContainer extends Component {
     }
 
     render() {
-        const {currentTab, currentDrafterIndex, players, visiblePlayers, drafters, round, finished, nextDrafters, nextTurn} = this.state
+        const {currentTab, currentDrafterIndex, players, drafters, round, finished, nextDrafters, nextTurn} = this.state
         const {userIndex} = this.props
         return (
             <Fragment>
@@ -70,7 +70,7 @@ class DraftToolContainer extends Component {
                     <DraftListContainer
                         currentDrafterIndex={currentDrafterIndex}
                         players={players}
-                        visiblePlayers={visiblePlayers}
+                        visiblePlayers={players}
                         drafters={drafters}
                         handleDraftClick={this.handleDraftClick}
                         round={round}
