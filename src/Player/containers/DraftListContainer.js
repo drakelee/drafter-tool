@@ -2,7 +2,6 @@ import React, {Component, Fragment} from 'react'
 import DraftList from '../components/DraftList'
 import {withStyles} from '@material-ui/core/styles'
 import CurrentDrafterToolbar from '../components/CurrentDrafterToolbar'
-import Toolbar from '@material-ui/core/Toolbar/Toolbar'
 import Paper from '@material-ui/core/Paper/Paper'
 
 class DraftListContainer extends Component {

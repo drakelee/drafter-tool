@@ -5,10 +5,16 @@ import TableBody from '@material-ui/core/TableBody/TableBody'
 import TableRow from '@material-ui/core/TableRow/TableRow'
 import TableCell from '@material-ui/core/TableCell/TableCell'
 import Button from '@material-ui/core/Button/Button'
+import TableFooter from '@material-ui/core/TableFooter/TableFooter'
+import TablePagination from '@material-ui/core/es/TablePagination/TablePagination'
+import TablePaginationActions from './TablePaginationActions'
 
 class DraftList extends Component {
     state = {
-        headers: []
+        headers: [],
+        page: 0,
+        rowsPerPage: 15,
+        players: []
     }
 
     componentDidMount() {
@@ -17,31 +23,50 @@ class DraftList extends Component {
         this.setState({headers})
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps, prevState) {
         const {players} = this.props
         const {headers} = this.state
         if (!headers.length && players.length) {
             const headers = players.length ? this.getHeaders(players[0]) : []
             this.setState({headers})
+        } else if (players !== prevState.players) {
+            this.setState({
+                players
+            })
         }
     }
 
     render() {
+        const {page, players, rowsPerPage} = this.state
+        const nonKeepers = players.filter(player => !player.removed)
+        const visiblePlayers = nonKeepers.filter(player => !player.removed).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
         return (
             <Table>
                 <TableHead>
                     {this.renderHeaderRows()}
                 </TableHead>
                 <TableBody>
-                    {this.renderBodyRows()}
+                    {this.renderBodyRows(visiblePlayers)}
                 </TableBody>
+                <TableFooter>
+                    <TableRow>
+                        <TablePagination
+                            colSpan={6}
+                            count={nonKeepers.length}
+                            rowsPerPage={15}
+                            page={page}
+                            onChangePage={this.handleChangePage}
+                            ActionsComponent={TablePaginationActions}
+                        />
+                    </TableRow>
+                </TableFooter>
             </Table>
         )
     }
 
     renderHeaderRows = () => {
         const {headers} = this.state
-        const whitelist = ['Rank', 'Player', 'Team', 'Bye', 'POS', 'AVG']
+        const whitelist = ['Rank', 'Player', 'Team', 'Bye', 'POS']
         const filteredHeaders = headers.filter(header => whitelist.includes(header))
         return (
             <TableRow>
@@ -55,15 +80,17 @@ class DraftList extends Component {
         )
     }
 
-    renderBodyRows = () => {
-        const {classes, players, finished, nextTurn} = this.props
+    renderBodyRows = players => {
+        const {classes, finished, nextTurn} = this.props
+        const {page, rowsPerPage} = this.state
         return players.map((player, index) => {
+            const nonPagedIndex = (page * rowsPerPage) + index
             return (
                 <TableRow
                     hover
                     key={index}
                     classes={{
-                        root: player.removed ? classes.tableRowRootDisabled : nextTurn === index && classes.nextPlayer
+                        root: player.removed ? classes.tableRowRootDisabled : nextTurn === nonPagedIndex && classes.nextPlayer
                     }}
                 >
                     <TableCell component='th' scope='row'>
@@ -73,7 +100,6 @@ class DraftList extends Component {
                     <TableCell>{player.Team}</TableCell>
                     <TableCell>{player.Bye}</TableCell>
                     <TableCell>{player.POS}</TableCell>
-                    <TableCell>{player.AVG}</TableCell>
                     <TableCell>
                         <Button
                             classes={{
@@ -97,6 +123,10 @@ class DraftList extends Component {
     handleDraftClick = rank => () => {
         const {handleDraftClick} = this.props
         handleDraftClick && handleDraftClick(parseInt(rank, 10) - 1)
+    }
+
+    handleChangePage = (event, page) => {
+        this.setState({page})
     }
 }
 
