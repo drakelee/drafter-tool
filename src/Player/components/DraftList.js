@@ -6,7 +6,7 @@ import TableRow from '@material-ui/core/TableRow/TableRow'
 import TableCell from '@material-ui/core/TableCell/TableCell'
 import Button from '@material-ui/core/Button/Button'
 import TableFooter from '@material-ui/core/TableFooter/TableFooter'
-import TablePagination from '@material-ui/core/es/TablePagination/TablePagination'
+import TablePagination from '@material-ui/core/TablePagination/TablePagination'
 import TablePaginationActions from './TablePaginationActions'
 
 class DraftList extends Component {

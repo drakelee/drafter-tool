@@ -51,7 +51,7 @@ class DraftOrder extends Component {
             const title = keeper ? `${drafterName} is keeping ${keeper.Player}`:`${drafterName}`
             return (
                 <GridListTile
-                    key={`${drafter.index}${drafter.round}`}
+                    key={index}
                     classes={{
                         root: classes.tile,
                         tile: this.draftTileStyle(currentDrafter, keeper, userTeam)

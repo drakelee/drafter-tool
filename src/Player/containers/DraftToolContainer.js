@@ -5,7 +5,7 @@ import DraftListContainer from './DraftListContainer'
 import playerData from '../../resources/players.json'
 import drafters from '../../resources/drafters'
 import TeamListContainer from './TeamListContainer'
-import {head, find, every, isEmpty, reverse} from 'lodash'
+import {head, find, every, isEmpty, reverse, tail} from 'lodash'
 import DraftOrderContainer from './DraftOrderContainer'
 
 class DraftToolContainer extends Component {
@@ -167,45 +167,60 @@ class DraftToolContainer extends Component {
                 finished: true
             }
         }
-        const isForward = round % 2 !== 0
-        let nextTurnCounter = nextTurn || 0
-        let foundNextTurn = nextTurnFound
-        let remainingDrafters = drafters.slice(isForward ? currentDraftIndex : 0, isForward ? drafters.length : currentDraftIndex + 1)
-        if (!isForward) remainingDrafters = reverse(remainingDrafters)
-        const nextDrafters = remainingDrafters.reduce((acc, drafter, index) => {
-            const indexDir = isForward ? index : -index
-            const drafterIndex = currentDraftIndex + indexDir
-            const {team} = drafter
 
-            if (every(team, player => player.round !== round)) {
-                if (drafterIndex === userIndex && !foundNextTurn && nextTurnCounter !== 0) {
-                    foundNextTurn = true
-                } else if (drafterIndex !== userIndex && !foundNextTurn) {
-                    nextTurnCounter += 1
+        // worst logic ever
+        const loadedDrafters = this.state.nextDrafters
+        if (loadedDrafters.length === 0) {
+            const isForward = round % 2 !== 0
+            let nextTurnCounter = nextTurn || 0
+            let foundNextTurn = nextTurnFound
+            let remainingDrafters = drafters.slice(isForward ? currentDraftIndex : 0, isForward ? drafters.length : currentDraftIndex + 1)
+            if (!isForward) remainingDrafters = reverse(remainingDrafters)
+            const nextDrafters = remainingDrafters.reduce((acc, drafter, index) => {
+                const indexDir = isForward ? index : -index
+                const drafterIndex = currentDraftIndex + indexDir
+                const {team} = drafter
+
+                if (every(team, player => player.round !== round)) {
+                    if (drafterIndex === userIndex && !foundNextTurn && nextTurnCounter !== 0) {
+                        foundNextTurn = true
+                    } else if (drafterIndex !== userIndex && !foundNextTurn) {
+                        nextTurnCounter += 1
+                    }
+                    return [...acc, {index: drafterIndex, round}]
+                } else {
+                    const keeper = find(team, player => player.round === round)
+                    return [...acc, {index: drafterIndex, keeper, round}]
                 }
-                return [...acc, {index: drafterIndex, round}]
-            } else {
-                const keeper = find(team, player => player.round === round)
-                return [...acc, {index: drafterIndex, keeper, round}]
-            }
-        }, prevIter)
+            }, prevIter)
 
-        let fullList = nextDrafters.slice(0, 30)
-        const startFromBeginning = (round + 1) % 2 !== 0
-        const initialIndex = startFromBeginning ? 0 : drafters.length - 1
-        if (isEmpty(nextDrafters) && round + 1 <= 16) {
-            return this.nextDrafter(initialIndex, round + 1, drafters)
-        } else if (nextDrafters.length < 30 && round + 1 <= 16) {
-            const continueSearch = this.nextDrafter(initialIndex, round + 1, drafters, nextDrafters, nextTurnCounter, foundNextTurn)
-            fullList = continueSearch.nextDrafters.slice(0, 30)
-            nextTurn = continueSearch.nextTurn
-        }
-        return {
-            currentDrafterIndex: head(fullList).index,
-            nextDrafters: round > 16 ? [] : fullList,
-            round,
-            finished: round > 16,
-            nextTurn
+            let fullList = nextDrafters
+            const startFromBeginning = (round + 1) % 2 !== 0
+            const initialIndex = startFromBeginning ? 0 : drafters.length - 1
+            if (isEmpty(nextDrafters) && round + 1 <= 16) {
+                return this.nextDrafter(initialIndex, round + 1, drafters)
+            } else if (nextDrafters.length < 16 * drafters.length && round + 1 <= 16) {
+                const continueSearch = this.nextDrafter(initialIndex, round + 1, drafters, nextDrafters, nextTurnCounter, foundNextTurn)
+                fullList = continueSearch.nextDrafters
+                nextTurn = continueSearch.nextTurn
+            }
+
+            return {
+                currentDrafterIndex: head(fullList).index,
+                nextDrafters: round > 16 ? [] : fullList,
+                round,
+                finished: round > 16,
+                nextTurn
+            }
+        } else {
+            const nextDrafters = tail(loadedDrafters)
+            return {
+                currentDrafterIndex: head(nextDrafters).index,
+                nextDrafters: round > 16 ? [] : nextDrafters,
+                round,
+                finished: round > 16,
+                // nextTurns
+            }
         }
     }
 
