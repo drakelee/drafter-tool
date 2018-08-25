@@ -22,7 +22,7 @@ class DraftToolContainer extends Component {
         drafters: [],
         finished: false,
         // User Specific
-        nextTurn: -1
+        nextTurns: []
     }
 
     componentDidMount() {
@@ -49,7 +49,7 @@ class DraftToolContainer extends Component {
     }
 
     render() {
-        const {currentTab, currentDrafterIndex, players, drafters, round, finished, nextDrafters, nextTurn} = this.state
+        const {currentTab, currentDrafterIndex, players, drafters, round, finished, nextDrafters, nextTurns} = this.state
         const {userIndex} = this.props
         return (
             <Fragment>
@@ -76,7 +76,7 @@ class DraftToolContainer extends Component {
                         round={round}
                         finished={finished}
                         userIndex={userIndex}
-                        nextTurn={nextTurn}
+                        nextTurns={nextTurns}
                     />
                 }
                 {currentTab === 1 &&
@@ -95,7 +95,7 @@ class DraftToolContainer extends Component {
     }
 
     handleDraftClick = (index, isKeeper) => {
-        const {currentDrafterIndex, players, round, drafters} = this.state
+        const {currentDrafterIndex, players, round, drafters, nextTurns} = this.state
         const draftedPlayer = {
             ...players[index],
             removed: true,
@@ -124,11 +124,20 @@ class DraftToolContainer extends Component {
             nextIndex = currentDrafterIndex - 1
         }
         const nextDrafter = this.nextDrafter(nextIndex, isNewRound ? round + 1 : round, drafters)
+        const newTurns = nextTurns.reduce((acc, nextTurn, index) => {
+            if (nextTurn - 1 > 0 && !isKeeper) {
+                acc.push(nextTurn - 1)
+            } else if (isKeeper) {
+                acc.push(nextTurn)
+            }
+            return acc
+        }, [])
         this.setState({
             visiblePlayers,
             drafters: newDrafters,
             players: remainingPlayers,
-            ...nextDrafter
+            ...nextDrafter,
+            nextTurns: newTurns
         })
     }
 
@@ -157,7 +166,7 @@ class DraftToolContainer extends Component {
         })
     }
 
-    nextDrafter = (currentDraftIndex, round, drafters, prevIter = [], nextTurn, nextTurnFound) => {
+    nextDrafter = (currentDraftIndex, round, drafters, prevIter = [], nextTurnsCont, nextTurnCounterCont) => {
         const {userIndex} = this.props
         if (round > 16) {
             return {
@@ -170,21 +179,23 @@ class DraftToolContainer extends Component {
 
         // worst logic ever
         const loadedDrafters = this.state.nextDrafters
+        const loadedNextTurns = this.state.nextTurns
         if (loadedDrafters.length === 0) {
             const isForward = round % 2 !== 0
-            let nextTurnCounter = nextTurn || 0
-            let foundNextTurn = nextTurnFound
+            let nextTurnCounter = nextTurnCounterCont || 0
             let remainingDrafters = drafters.slice(isForward ? currentDraftIndex : 0, isForward ? drafters.length : currentDraftIndex + 1)
             if (!isForward) remainingDrafters = reverse(remainingDrafters)
+            let nextTurns = nextTurnsCont || []
             const nextDrafters = remainingDrafters.reduce((acc, drafter, index) => {
                 const indexDir = isForward ? index : -index
                 const drafterIndex = currentDraftIndex + indexDir
                 const {team} = drafter
 
                 if (every(team, player => player.round !== round)) {
-                    if (drafterIndex === userIndex && !foundNextTurn && nextTurnCounter !== 0) {
-                        foundNextTurn = true
-                    } else if (drafterIndex !== userIndex && !foundNextTurn) {
+                    if (drafterIndex === userIndex) {
+                        nextTurns.push(nextTurnCounter)
+                        nextTurnCounter += 1
+                    } else if (drafterIndex !== userIndex) {
                         nextTurnCounter += 1
                     }
                     return [...acc, {index: drafterIndex, round}]
@@ -200,9 +211,9 @@ class DraftToolContainer extends Component {
             if (isEmpty(nextDrafters) && round + 1 <= 16) {
                 return this.nextDrafter(initialIndex, round + 1, drafters)
             } else if (nextDrafters.length < 16 * drafters.length && round + 1 <= 16) {
-                const continueSearch = this.nextDrafter(initialIndex, round + 1, drafters, nextDrafters, nextTurnCounter, foundNextTurn)
+                const continueSearch = this.nextDrafter(initialIndex, round + 1, drafters, nextDrafters, nextTurns, nextTurnCounter)
                 fullList = continueSearch.nextDrafters
-                nextTurn = continueSearch.nextTurn
+                nextTurns = continueSearch.nextTurns
             }
 
             return {
@@ -210,7 +221,7 @@ class DraftToolContainer extends Component {
                 nextDrafters: round > 16 ? [] : fullList,
                 round,
                 finished: round > 16,
-                nextTurn
+                nextTurns
             }
         } else {
             const nextDrafters = tail(loadedDrafters)
@@ -219,7 +230,7 @@ class DraftToolContainer extends Component {
                 nextDrafters: round > 16 ? [] : nextDrafters,
                 round,
                 finished: round > 16,
-                // nextTurns
+                nextTurns: loadedNextTurns
             }
         }
     }
