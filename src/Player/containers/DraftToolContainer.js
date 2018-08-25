@@ -4,6 +4,7 @@ import Tab from '@material-ui/core/Tab/Tab'
 import DraftListContainer from './DraftListContainer'
 import playerData from '../../resources/players.json'
 import drafters from '../../resources/drafters'
+import expertsData from '../../resources/experts'
 import TeamListContainer from './TeamListContainer'
 import {head, find, every, isEmpty, reverse, tail} from 'lodash'
 import DraftOrderContainer from './DraftOrderContainer'
@@ -26,7 +27,9 @@ class DraftToolContainer extends Component {
     }
 
     componentDidMount() {
-        const players = this.seedPlayers(playerData.data, drafters)
+        const {source} = this.props
+        const data = source === 0 ?  playerData.data : expertsData.data
+        const players = this.seedPlayers(data, drafters)
         const visiblePlayers = players.filter(player => !player.removed).slice(0, 15)
         const generatedDrafters = this.generateTeams(drafters)
         this.setState({
@@ -50,7 +53,7 @@ class DraftToolContainer extends Component {
 
     render() {
         const {currentTab, currentDrafterIndex, players, drafters, round, finished, nextDrafters, nextTurns} = this.state
-        const {userIndex} = this.props
+        const {userIndex, source} = this.props
         return (
             <Fragment>
                 <DraftOrderContainer
@@ -77,6 +80,7 @@ class DraftToolContainer extends Component {
                         finished={finished}
                         userIndex={userIndex}
                         nextTurns={nextTurns}
+                        source={source}
                     />
                 }
                 {currentTab === 1 &&
@@ -236,13 +240,15 @@ class DraftToolContainer extends Component {
     }
 
     seedPlayers = (players, drafters) => {
+        const {source} = this.props
+        const adp = source === 0
         const keepers = drafters.reduce((acc, drafter) => {
             const {team} = drafter
             return [...acc, ...team.map(player => player.Player)]
         }, [])
 
         return players.reduce((acc, player) => {
-            if (keepers.includes(player.Player)) {
+            if (keepers.includes(adp ? player.Player : player.Overall)) {
                 return [...acc, {...player, removed: true}]
             } else {
                 return [...acc, player]

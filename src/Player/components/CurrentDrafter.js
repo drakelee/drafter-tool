@@ -5,7 +5,8 @@ import MenuItem from '@material-ui/core/MenuItem/MenuItem'
 
 class CurrentDrafter extends Component {
     state = {
-        userIndex: ''
+        userIndex: '',
+        source: ''
     }
 
     render() {
@@ -18,6 +19,13 @@ class CurrentDrafter extends Component {
                 >
                     {this.renderMenuItems()}
                 </Select>
+                <InputLabel>Which player list do you wants? ADP or Experts (Compiled by FantasyPros)</InputLabel>
+                <Select
+                    value={this.state.source}
+                    onChange={this.handleSourceChange}
+                >
+                    {this.renderSourceItems()}
+                </Select>
             </form>
         )
     }
@@ -28,12 +36,24 @@ class CurrentDrafter extends Component {
         })
     }
 
+    renderSourceItems = () => {
+        return [<MenuItem value={0}>ADP</MenuItem>, <MenuItem value={1}>Experts</MenuItem>]
+    }
+
     handleChange = event => {
         const {handleChange} = this.props
         this.setState({
             userIndex: event.target.value
         })
         handleChange && handleChange(event.target.value)
+    }
+
+    handleSourceChange = event => {
+        const {handleSourceChange} = this.props
+        this.setState({
+            source: event.target.value
+        })
+        handleSourceChange && handleSourceChange(event.target.value)
     }
 }
 

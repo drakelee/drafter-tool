@@ -7,12 +7,13 @@ import CurrentDrafter from '../../Player/components/CurrentDrafter'
 
 class App extends Component {
     state = {
-        userIndex: -1
+        userIndex: -1,
+        source: -1
     }
 
     render() {
         const {classes} = this.props
-        const {userIndex} = this.state
+        const {userIndex, source} = this.state
         return (
             <div className="classes.root">
                 <NavBarContainer
@@ -20,8 +21,8 @@ class App extends Component {
                 />
                 <Toolbar/>
                 <main className={classes.content}>
-                    {userIndex === -1 && <CurrentDrafter handleChange={this.handleChange}/>}
-                    {userIndex > -1 && <DraftToolContainer userIndex={userIndex}/>}
+                    {(userIndex === -1 || source === -1) && <CurrentDrafter handleChange={this.handleChange} handleSourceChange={this.handleSourceChange}/>}
+                    {userIndex > -1  && source > -1 && <DraftToolContainer userIndex={userIndex} source={source}/>}
                 </main>
             </div>
         )
@@ -30,6 +31,12 @@ class App extends Component {
     handleChange = index => {
         this.setState({
             userIndex: index
+        })
+    }
+
+    handleSourceChange = index => {
+        this.setState({
+            source: index
         })
     }
 }

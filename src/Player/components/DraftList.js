@@ -66,7 +66,8 @@ class DraftList extends Component {
 
     renderHeaderRows = () => {
         const {headers} = this.state
-        const whitelist = ['Rank', 'Player', 'Team', 'Bye', 'POS']
+        const {source} = this.props
+        const whitelist = source === 0 ? ['Rank', 'Player', 'Team', 'Bye', 'POS'] : ['Rank', 'Overall', 'Team', 'Bye', 'Pos']
         const filteredHeaders = headers.filter(header => whitelist.includes(header))
         return (
             <TableRow>
@@ -81,8 +82,9 @@ class DraftList extends Component {
     }
 
     renderBodyRows = players => {
-        const {classes, finished, nextTurns} = this.props
+        const {classes, finished, nextTurns, source} = this.props
         const {page, rowsPerPage} = this.state
+        const adp = source === 0
         return players.map((player, index) => {
             const nonPagedIndex = (page * rowsPerPage) + index
             let estimatedPlayer
@@ -100,10 +102,10 @@ class DraftList extends Component {
                     <TableCell component='th' scope='row'>
                         {player.Rank}
                     </TableCell>
-                    <TableCell>{player.Player}</TableCell>
+                    <TableCell>{adp ? player.Player : player.Overall}</TableCell>
                     <TableCell>{player.Team}</TableCell>
                     <TableCell>{player.Bye}</TableCell>
-                    <TableCell>{player.POS}</TableCell>
+                    <TableCell>{adp ? player.POS : player.Pos}</TableCell>
                     <TableCell>
                         <Button
                             classes={{
