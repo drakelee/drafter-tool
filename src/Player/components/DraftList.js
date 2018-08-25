@@ -67,7 +67,7 @@ class DraftList extends Component {
     renderHeaderRows = () => {
         const {headers} = this.state
         const {source} = this.props
-        const whitelist = source === 0 ? ['Rank', 'Player', 'Team', 'Bye', 'POS'] : ['Rank', 'Overall', 'Team', 'Bye', 'Pos']
+        const whitelist = source === 0 ? ['Rank', 'Player', 'Team', 'Bye', 'POS'] : ['Rank', 'Overall', 'Team', 'Pos', 'Bye']
         const filteredHeaders = headers.filter(header => whitelist.includes(header))
         return (
             <TableRow>
@@ -104,8 +104,8 @@ class DraftList extends Component {
                     </TableCell>
                     <TableCell>{adp ? player.Player : player.Overall}</TableCell>
                     <TableCell>{player.Team}</TableCell>
-                    <TableCell>{player.Bye}</TableCell>
-                    <TableCell>{adp ? player.POS : player.Pos}</TableCell>
+                    <TableCell>{adp ? player.Bye : player.Pos}</TableCell>
+                    <TableCell>{adp ? player.POS : player.Bye}</TableCell>
                     <TableCell>
                         <Button
                             classes={{
