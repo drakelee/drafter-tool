@@ -7,7 +7,7 @@ import Paper from '@material-ui/core/Paper/Paper'
 class DraftListContainer extends Component {
 
     render() {
-        const {classes, currentDrafterIndex, drafters, visiblePlayers, handleDraftClick, round, finished, nextTurn} = this.props
+        const {classes, currentDrafterIndex, drafters, visiblePlayers, handleDraftClick, round, finished, nextTurns} = this.props
         return (
             <Fragment>
                 <Paper>
@@ -17,14 +17,14 @@ class DraftListContainer extends Component {
                         currentDrafterIndex={currentDrafterIndex}
                         round={round}
                         finished={finished}
-                        nextTurn={nextTurn}
+                        nextTurns={nextTurns}
                     />
                     <DraftList
                         players={visiblePlayers}
                         classes={classes}
                         handleDraftClick={handleDraftClick}
                         finished={finished}
-                        nextTurn={nextTurn}
+                        nextTurns={nextTurns}
                     />
                 </Paper>
             </Fragment>

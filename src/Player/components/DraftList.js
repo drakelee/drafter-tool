@@ -81,16 +81,20 @@ class DraftList extends Component {
     }
 
     renderBodyRows = players => {
-        const {classes, finished, nextTurn} = this.props
+        const {classes, finished, nextTurns} = this.props
         const {page, rowsPerPage} = this.state
         return players.map((player, index) => {
             const nonPagedIndex = (page * rowsPerPage) + index
+            let estimatedPlayer
+            if (nextTurns.includes(nonPagedIndex)) {
+                estimatedPlayer = true
+            }
             return (
                 <TableRow
                     hover
                     key={player.Player}
                     classes={{
-                        root: player.removed ? classes.tableRowRootDisabled : nextTurn === nonPagedIndex && classes.nextPlayer
+                        root: player.removed ? classes.tableRowRootDisabled : estimatedPlayer && classes.nextPlayer
                     }}
                 >
                     <TableCell component='th' scope='row'>
